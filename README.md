@@ -37,10 +37,18 @@ Die Composables sind laut Vorgabe `.js`-Dateien. Mit `allowJs` und `checkJs` in 
 ## Reflexion
 
 **1. Warum darf NoteCard die Notiz-Prop nicht selbst verändern, und wie löst ihr das stattdessen?**
-Props gehören der Elternkomponente, und Daten fließen nur in eine Richtung (nach unten). Würde `NoteCard` die Notiz selbst ändern oder löschen, wüsste `App.vue` bzw. `useNotes` nichts davon. Dann wären die Liste, der Filter und `localStorage` nicht mehr synchron. Vue warnt außerdem bei Prop-Mutationen. Deshalb sendet `NoteCard` nur `emit('delete', note.id)`, und `App.vue` ruft darauf `deleteNote(id)` aus `useNotes` auf. Die Änderung passiert also dort, wo die Daten liegen.
+Die Notizen liegen in `useNotes`. `NoteCard` bekommt eine Notiz nur als Prop, um sie anzuzeigen. Wenn `NoteCard` die Notiz selbst ändern würde, bekäme `useNotes` davon nichts mit. Dann würden die Liste und `localStorage` nicht mehr zusammenpassen. Vue zeigt in so einem Fall auch eine Warnung an.
+
+Darum gibt `NoteCard` nur Bescheid: Beim Klick auf „Löschen“ schickt sie `emit('delete', note.id)` nach oben. `App.vue` reagiert darauf und ruft `deleteNote(id)` auf. Gelöscht wird also dort, wo die Liste liegt.
 
 **2. Was passiert, wenn zwei Komponenten dasselbe `useNotes()` aufrufen? Teilen sie sich die Notizen?**
-Nein. Die Refs (`notes`, `searchTerm`) werden *innerhalb* der Funktion erzeugt, also bekommt jeder Aufruf eigene, unabhängige Refs. Beide würden beim Start dieselben Daten aus `localStorage` lesen, danach aber auseinanderlaufen: Eine neue Notiz in der einen Instanz sieht die andere erst nach einem Reload. Deshalb ruft bei uns nur `App.vue` `useNotes()` auf und gibt die Daten per Props weiter. Wollte man den Zustand teilen, müsste man die Refs *außerhalb* der Funktion auf Modulebene anlegen (oder einen Store wie Pinia verwenden).
+Nein. `notes` und `searchTerm` werden innerhalb von `useNotes()` mit `ref()` angelegt. Jeder Aufruf erzeugt also neue Refs. Am Anfang hätten beide Komponenten zwar dieselben Notizen, weil beide aus `localStorage` lesen. Wenn man aber in der einen Komponente eine Notiz anlegt, sieht die andere sie erst nach einem Reload.
+
+In meiner App ruft deshalb nur `App.vue` `useNotes()` auf und gibt die Notizen per Props weiter. Wenn man den Zustand wirklich teilen will, legt man die Refs außerhalb der Funktion an.
 
 **3. Wozu dient das Note-Interface, wenn der Code auch ohne liefe?**
-Es legt fest, wie eine Notiz aussieht. Das ist der „Vertrag“ zwischen `NoteForm`, `useNotes`, `App.vue` und `NoteCard`. Schreibt man z. B. `note.text` statt `note.content` oder vergisst man `tags` in `addNote`, meldet das der Editor bzw. `vue-tsc` schon beim Schreiben und nicht erst als leere Stelle im Browser. Dazu kommen Autovervollständigung und eine eingebaute Dokumentation der Datenstruktur. `NoteInput` (= `Note` ohne `id`/`createdAt`) zeigt außerdem, dass das Formular diese beiden Felder nicht liefern muss, weil `useNotes` sie vergibt.
+Das Interface legt einmal fest, welche Felder eine Notiz hat: `id`, `title`, `content`, `tags` und `createdAt`. Alle Komponenten und `useNotes` richten sich danach.
+
+Den Vorteil merkt man beim Programmieren. Wenn ich `note.text` statt `note.content` schreibe oder in `addNote` die Tags vergesse, zeigt der Editor sofort einen Fehler. Ohne TypeScript würde ich das erst merken, wenn im Browser etwas fehlt. Außerdem schlägt der Editor die Felder automatisch vor.
+
+`NoteInput` ist eine Notiz ohne `id` und `createdAt`. Daran sieht man, dass das Formular diese zwei Felder nicht mitschicken muss, weil `useNotes` sie selbst setzt.
