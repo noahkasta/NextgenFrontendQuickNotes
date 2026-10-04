@@ -1,0 +1,147 @@
+:root {
+  --black: #000;
+  --white: #fff;
+  --grey: #6b6b6b;
+  --line: 2px solid var(--black);
+  --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  font: 16px/1.5 var(--sans);
+  color-scheme: light;
+  color: var(--black);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--black);
+  color: var(--white);
+}
+
+body {
+  margin: 0;
+  background: var(--white);
+}
+
+#app {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+
+h1 {
+  font-size: clamp(3rem, 11vw, 7.5rem);
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+p {
+  margin: 0;
+}
+
+/* kleine Beschriftungen: Monospace, Großbuchstaben */
+.label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+input,
+textarea {
+  font: inherit;
+  color: var(--black);
+  background: var(--white);
+  border: var(--line);
+  border-radius: 0;
+  padding: 10px 12px;
+  appearance: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--grey);
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 4px 4px 0 var(--black);
+}
+
+button {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: var(--line);
+  border-radius: 0;
+  background: var(--white);
+  color: var(--black);
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled),
+button:focus-visible {
+  background: var(--black);
+  color: var(--white);
+  outline: none;
+}
+
+button.primary {
+  background: var(--black);
+  color: var(--white);
+  padding: 14px;
+}
+
+button.primary:hover:not(:disabled),
+button.primary:focus-visible {
+  background: var(--white);
+  color: var(--black);
+}
+
+button:disabled {
+  border-color: var(--grey);
+  background: var(--white);
+  color: var(--grey);
+  cursor: not-allowed;
+}
+
+/* Tags werden in NoteForm (Vorschau) und NoteCard gleich dargestellt */
+.tags {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border: 1px solid var(--black);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
